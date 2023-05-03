@@ -1,12 +1,12 @@
 import flatpickr from 'flatpickr';
 import 'flatpickr/dist/flatpickr.min.css';
 
-const datetimePicker = document.getElementById('datetime-picker');
-const startButton = document.querySelector('[data-start]');
-const daysValue = document.querySelector('[data-days]');
-const hoursValue = document.querySelector('[data-hours]');
-const minutesValue = document.querySelector('[data-minutes]');
-const secondsValue = document.querySelector('[data-seconds]');
+const datetimePicker = document.getElementById("datetime-picker");
+const startButton = document.querySelector("[data-start]");
+const daysValue = document.querySelector("[data-days]");
+const hoursValue = document.querySelector("[data-hours]");
+const minutesValue = document.querySelector("[data-minutes]");
+const secondsValue = document.querySelector("[data-seconds]");
 
 let intervalId;
 let selectedDate;
@@ -16,33 +16,43 @@ function updateTimer() {
   const distance = selectedDate - now;
   if (distance < 0) {
     clearInterval(intervalId);
-    daysValue.textContent = '00';
-    hoursValue.textContent = '00';
-    minutesValue.textContent = '00';
-    secondsValue.textContent = '00';
+    daysValue.textContent = "00";
+    hoursValue.textContent = "00";
+    minutesValue.textContent = "00";
+    secondsValue.textContent = "00";
     return;
   }
   const days = Math.floor(distance / (1000 * 60 * 60 * 24))
     .toString()
-    .padStart(2, '0');
+    .padStart(2, "0");
   const hours = Math.floor(
     (distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
   )
     .toString()
-    .padStart(2, '0');
-  const minutes = Math.floor(
-    (distance % (1000 * 60 * 60)) / (1000 * 60)
-  )
+    .padStart(2, "0");
+  const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60))
     .toString()
-    .padStart(2, '0');
+    .padStart(2, "0");
   const seconds = Math.floor((distance % (1000 * 60)) / 1000)
     .toString()
-    .padStart(2, '0');
+    .padStart(2, "0");
   daysValue.textContent = days;
   hoursValue.textContent = hours;
   minutesValue.textContent = minutes;
   secondsValue.textContent = seconds;
 }
+
+function handleStartButtonClick() {
+  selectedDate = new Date(datetimePicker.value).getTime();
+  if (!selectedDate || selectedDate < new Date().getTime()) {
+    window.alert("Please choose a date in the future");
+    return;
+  }
+  clearInterval(intervalId);
+  intervalId = setInterval(updateTimer, 1000);
+}
+
+startButton.addEventListener("click", handleStartButtonClick);
 
 const options = {
   enableTime: true,
@@ -52,18 +62,16 @@ const options = {
   onClose(selectedDates) {
     const newSelectedDate = selectedDates[0];
     if (newSelectedDate < new Date()) {
-      window.alert('Please choose a date in the future');
+      window.alert("Please choose a date in the future");
       startButton.disabled = true;
       return;
-    } 
+    }
     startButton.disabled = false;
-    selectedDate = newSelectedDate.getTime();
-    clearInterval(intervalId);
-    intervalId = setInterval(updateTimer, 1000);
   },
 };
 
 flatpickr(datetimePicker, options);
+
 
 
 
